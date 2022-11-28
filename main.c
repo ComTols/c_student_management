@@ -32,30 +32,53 @@ Student *getFromFile(char *path) {
 
 }
 
-Student* encode(char* jsonString) {
-    int size = strlen(jsonString);
-    printf("%c%c\n", jsonString[0], jsonString[size-1]);
-    if(jsonString[0] == '{' && jsonString[size-1] == '}') {
-        printf("%c\n", jsonString[1]);
-        if(jsonString[1] == '"') {
-            int i = 2;
-            while (jsonString[i] != '"') {
-                printf("%c", jsonString[i]);
-                i++;
-            }
-            char variableName[i-2];
-            for (int j = 2; j < i-2; j++) {
-                variableName[j] = jsonString[j];
-            }
-            printf("\n%s lol", variableName);
-        } else {
-            printf("Json ist nicht in der geforderten Form!");
-            exit(json_error_file_struct_head_not_formatet);
-        }
-    } else {
-        printf("Json ist nicht in der geforderten Form!");
-        exit(json_error_file_struct_beginn_or_end);
+bool isNumber(char c) {
+    if(
+        c == '0' ||
+        c == '1' ||
+        c == '2' ||
+        c == '3' ||
+        c == '4' ||
+        c == '5' ||
+        c == '6' ||
+        c == '7' ||
+        c == '8' ||
+        c == '9'
+    ) {
+        return true;
     }
+    return false;
+}
+
+int potenz(int basis, int exponent) {
+    if(exponent == 0) return 1;
+    int ret = basis;
+    for (int i = 1; i < exponent; ++i) {
+        ret *= basis;
+    }
+    return ret;
+}
+
+Student* encode(char* jsonString) {
+    //int size = strlen(jsonString);
+
+    //Prüfen, ob an der Stelle 10 eine Nummer ist (erste Stelle von anzahl)
+    if(!isNumber(jsonString[10])) {
+        exit(1);
+    }
+    //Ende der Nummer finden
+    int i = 10;
+    while (isNumber(jsonString[i])) {
+        i++;
+    }
+    //String in int konvertieren
+    int anzahl = 0;
+    for (int j = 10; j < i; j++) {
+        anzahl += potenz(10, i-j) * (int)(jsonString[j]-'0');
+    }
+    anzahl /= 10;
+    printf("Anzahl: %d", anzahl);
+
 }
 
 
@@ -69,9 +92,7 @@ int main(int argc, char *argv[]) {
         index->id = i + 100;
         index++;
     }
-    printf("%s\n", students[90].nname);
-    return;
     //saveAsFile(students, "database.json");
-    encode("{\"anzahl\":4}");
+    encode("{\"anzahl\":44567894,\"studierende\":[]}");
     return 0;
 }
