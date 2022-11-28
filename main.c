@@ -21,7 +21,7 @@ Student* getFromFile(char *path);
 void saveAsFile(Student *students, char *path);
 Student* encode(char* jsonString);
 Student jStudent(char* jsonString, int* indexPointer);
-Student* encode(char* jsonString);
+int jInt(char* jsonString, int* indexPointer);
 char* jString(char* jsonString, int* indexPointer);
 Datum jDatum(char* jsonString, int* indexPointer);
 bool isNumber(char c);
@@ -217,8 +217,6 @@ Datum jDatum(char* jsonString, int* indexPointer) {
         datum->monat = monat;
         datum->jahr = jahr;
         *indexPointer = index;
-        printf("\n\n---\n%c\n", jsonString[index]);
-
         return *datum;
     } else {
         exit(4);
