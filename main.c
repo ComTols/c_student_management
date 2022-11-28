@@ -1,12 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <string.h>
-
-enum EXIT_CODES {
-    json_error_file_struct_beginn_or_end = 1,
-    json_error_file_struct_head_not_formatet = 2,
-};
 
 typedef struct {
     int tag;
@@ -15,8 +9,8 @@ typedef struct {
 } Datum;
 
 typedef struct {
-    char *vname;
-    char *nname;
+    char* vname;
+    char* nname;
     int id;
     Datum gtag;
     Datum beginn;
@@ -25,39 +19,34 @@ typedef struct {
 
 Student *getFromFile(char *path);
 
-void saveAsFile(Student *students, char *path);
-
+void saveAsFile(Student *students, int size, char* path);
 Student *encode(char *jsonString);
-
 Student jStudent(char *jsonString, int *indexPointer);
-
 int jInt(char *jsonString, int *indexPointer);
-
 char *jString(char *jsonString, int *indexPointer);
-
 Datum jDatum(char *jsonString, int *indexPointer);
-
 bool isNumber(char c);
-
 int potenz(int basis, int exponent);
 
-void saveAsFile(Student *students, char *path) {
-    FILE *f = fopen(path, "w+");
-
-}
 
 Student *getFromFile(char *path) {
 
 }
 
-void decode(Student *students, int size) {
+void saveAsFile(Student *students, int size, char* path) {
     //Öffne Datei und leere diese
     FILE *file;
-    file = fopen("../daten.json", "w+");
-    if (file == NULL) printf("Datei konnte nicht geöffnet werden.");
+    file = fopen(path, "w+");
+    if (file == NULL) {
+        printf("Datei konnte nicht geöffnet werden.");
+        return;
+    }
 
+    //Schreiben der Informationen im gefordertem Datenformat
+    //Öffne JSON-Objekt mit Feldern anzahl, studierende und öffne Array
     fprintf(file, "{\"anzahl\":%d,\"studierende\":[", size);
     Student *index = students;
+    //Erstelle für jeden Studenten ein JSON-Objekt und fülle es mit Daten
     for (int i = 0; i < size; i++) {
         fprintf(file,
                 "{\"vname\":\"%s\",\"nname\":\"%s\",\"id\":%d,\"gtag\":{\"tag\":%d,\"monat\":%d,\"jahr\":%d},\"beginn\":{\"tag\":%d,\"monat\":%d,\"jahr\":%d},\"ende\":{\"tag\":%d,\"monat\":%d,\"jahr\":%d}}",
@@ -65,11 +54,14 @@ void decode(Student *students, int size) {
                 index->beginn.tag, index->beginn.monat, index->beginn.jahr, index->ende.tag, index->ende.monat,
                 index->ende.jahr);
         index++;
+        //Der letzte Eintrag darf nicht auf einem Komma enden
         if (i != size - 1) {
             fprintf(file, ",");
         }
     }
+    //Schließe das Array und das JSON-Objekt
     fprintf(file, "]}");
+    //Schließe File-Stream
     fclose(file);
 }
 
@@ -291,6 +283,7 @@ int potenz(int basis, int exponent) {
 
 
 int main(int argc, char *argv[]) {
+    //Beispieldaten von 100 Studenten
     Student *students = malloc(sizeof(Student) * 100);
     Student *index = students;
 
@@ -298,9 +291,13 @@ int main(int argc, char *argv[]) {
         index->nname = "Max";
         index->vname = "Mustermann";
         index->id = i + 100;
+        index->gtag.tag = 25;
+        index->gtag.monat=6;
+        index->gtag.jahr = 2004;
         index++;
     }
-    //saveAsFile(students, "database.json");
+    //Speichere Beispieldaten in Datei
+    saveAsFile(students, 100,"../daten.json");
     students = encode(
             "{\"anzahl\":2,\"studierende\":[{\"beginn\":{\"tag\":15,\"monat\":5,\"jahr\":2001},\"ende\":{\"tag\":10,\"monat\":3,\"jahr\":2011},\"gtag\":{\"tag\":1,\"monat\":10,\"jahr\":2021},\"nname\":\"Mustermann\",\"vanme\":\"Max\"},{\"beginn\":{\"tag\":15,\"monat\":5,\"jahr\":2001},\"ende\":{\"tag\":10,\"monat\":3,\"jahr\":2011},\"gtag\":{\"tag\":1,\"monat\":10,\"jahr\":2021},\"nname\":\"Mustermann\",\"vanme\":\"Hans\"}]}");
     if (students == NULL) {
