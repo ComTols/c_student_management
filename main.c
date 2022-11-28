@@ -27,34 +27,24 @@ Student *getFromFile(char *path) {
 
 }
 
-void decode(Student *students){
+void decode(Student *students, int size){
+    //Öffne Datei und leere diese
     FILE *file;
     file = fopen("../daten.json", "w+");
-    if(file == NULL) printf("errroer");
-    fputs("\"anzahl\": ",file);
-    printf("%lu",sizeof (*students));
-    //fputs(length, file);
-    fputs(",\"studierende\":[",file);
-    /*for (int i = 0; i < (sizeof *students); ++i) {
-        /*fputs("\"vname\" : \"\","
-              "      \"nname\" : \"\","
-              "      \"id\" : \"\","
-              "      \"gtag\": {"
-              "        \"tag\": \"\","
-              "        \"monat\" : \"\","
-              "        \"Jahr\" : \"\""
-              "      },"
-              "      \"beginn\": {"
-              "        \"tag\": \"\","
-              "        \"monat\" : \"\","
-              "        \"Jahr\" : \"\""
-              "      },"
-              "      \"ende\": {"
-              "        \"tag\": \"\","
-              "        \"monat\" : \"\","
-              "        \"Jahr\" : \"\""
-              "      }",file);
-    }*/
+    if(file == NULL) printf("Datei konnte nicht geöffnet werden.");
+
+    fprintf(file, "{\"anzahl\":%d,\"studierende\":[", size);
+    Student* index = students;
+    for(int i = 0; i < size; i++) {
+        fprintf(file,
+                "{\"vname\":\"%s\",\"nname\":\"%s\",\"id\":%d,\"gtag\":{\"tag\":%d,\"monat\":%d,\"jahr\":%d},\"beginn\":{\"tag\":%d,\"monat\":%d,\"jahr\":%d},\"ende\":{\"tag\":%d,\"monat\":%d,\"jahr\":%d}}",
+                index->vname,index->nname,index->id,index->gtag.tag,index->gtag.monat,index->gtag.jahr,index->beginn.tag,index->beginn.monat,index->beginn.jahr,index->ende.tag,index->ende.monat,index->ende.jahr);
+        index++;
+        if(i != size-1) {
+            fprintf(file,",");
+        }
+    }
+    fprintf(file, "]}");
     fclose(file);
 }
 
@@ -69,8 +59,6 @@ int main(int argc, char *argv[]) {
         index->id = i + 100;
         index++;
     }
-    //printf("%s\n", students[90].nname);
-    //saveAsFile(students, "database.json");
-    decode(students);
+    decode(students, 100);
     return 0;
 }
