@@ -79,6 +79,25 @@ Student* encode(char* jsonString) {
     anzahl /= 10;
     printf("Anzahl: %d", anzahl);
 
+    //Prüfen, ob Schlüsselwort studierende nach Anzahl
+    i += 2;
+    if(jsonString[i] == 's' && jsonString[i+10]=='e') {
+        printf("%c%c", jsonString[i], jsonString[i+10]);
+        i+=13;
+        //Prüfen, ob studierende ein Array ist.
+        if(jsonString[i] == ']') {
+            i++;
+            if(jsonString[i] == ']') {
+                //Leeres Array
+                return 0;
+            }
+            //TODO: Studenten auslesen
+        } else {
+            exit(3);
+        }
+    } else {
+        exit(2);
+    }
 }
 
 
