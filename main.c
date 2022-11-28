@@ -17,11 +17,12 @@ typedef struct {
     Datum ende;
 } Student;
 
-void saveAsFile(Student* students, char* path) {
+void saveAsFile(Student *students, char *path) {
+    FILE *f = fopen(path, "w+");
 
 }
 
-Student* getFromFile(char* path) {
+Student *getFromFile(char *path) {
 
 }
 
