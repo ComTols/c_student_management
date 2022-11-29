@@ -9,31 +9,55 @@ typedef struct {
 } Datum;
 
 typedef struct {
-    char* vname;
-    char* nname;
+    char *vname;
+    char *nname;
     int id;
     Datum gtag;
     Datum beginn;
     Datum ende;
 } Student;
 
-Student *getFromFile(char *path);
+Student *getFromFile(char *path, int *size);
 
-void saveAsFile(Student *students, int size, char* path);
+void saveAsFile(Student *students, int size, char *path);
+
 Student *encode(char *jsonString);
+
 Student jStudent(char *jsonString, int *indexPointer);
+
 int jInt(char *jsonString, int *indexPointer);
+
 char *jString(char *jsonString, int *indexPointer);
+
 Datum jDatum(char *jsonString, int *indexPointer);
+
 bool isNumber(char c);
+
 int potenz(int basis, int exponent);
 
 
-Student *getFromFile(char *path) {
+Student *getFromFile(char *path, int *size) {
+    char *buffer = 0;
+    long length;
+    FILE *f = fopen(path, "r");
 
+    if (f) {
+        fseek(f, 0, SEEK_END);
+        length = ftell(f);
+        fseek(f, 0, SEEK_SET);
+        buffer = malloc(length);
+        if (buffer) {
+            fread(buffer, 1, length, f);
+        }
+        fclose(f);
+    }
+
+    if (buffer) {
+        return encode(buffer);
+    }
 }
 
-void saveAsFile(Student *students, int size, char* path) {
+void saveAsFile(Student *students, int size, char *path) {
     //Öffne Datei und leere diese
     FILE *file;
     file = fopen(path, "w+");
@@ -105,6 +129,7 @@ Student jStudent(char *jsonString, int *indexPointer) {
     Student *student = malloc(sizeof(Student));
     //Es folgen fünf Felder
     for (int k = 0; k < 5; ++k) {
+        printf("Schleife: %c%c%c\n", jsonString[index - 1], jsonString[index], jsonString[index + 1]);
         //Prüfen, ob beginn folgt
         if (jsonString[index] == 'b' && jsonString[index + 5] == 'n') {
             index += 8;
@@ -134,6 +159,7 @@ Student jStudent(char *jsonString, int *indexPointer) {
         } else if (jsonString[index] == 'i' && jsonString[index + 1] == 'd') {
             index += 4;
             student->id = jInt(jsonString, &index);
+            index--;
             //printf("Id int: %d\n", student->id);
         } else {
             exit(6);
@@ -292,17 +318,19 @@ int main(int argc, char *argv[]) {
         index->vname = "Mustermann";
         index->id = i + 100;
         index->gtag.tag = 25;
-        index->gtag.monat=6;
+        index->gtag.monat = 6;
         index->gtag.jahr = 2004;
         index++;
     }
     //Speichere Beispieldaten in Datei
-    saveAsFile(students, 100,"../daten.json");
-    students = encode(
+    //saveAsFile(students, 100,"../daten.json");
+    /*students = encode(
             "{\"anzahl\":2,\"studierende\":[{\"beginn\":{\"tag\":15,\"monat\":5,\"jahr\":2001},\"ende\":{\"tag\":10,\"monat\":3,\"jahr\":2011},\"gtag\":{\"tag\":1,\"monat\":10,\"jahr\":2021},\"nname\":\"Mustermann\",\"vanme\":\"Max\"},{\"beginn\":{\"tag\":15,\"monat\":5,\"jahr\":2001},\"ende\":{\"tag\":10,\"monat\":3,\"jahr\":2011},\"gtag\":{\"tag\":1,\"monat\":10,\"jahr\":2021},\"nname\":\"Mustermann\",\"vanme\":\"Hans\"}]}");
     if (students == NULL) {
         printf("Leere Datei");
-    }
+    }*/
+    int count = 0;
+    students = getFromFile("../daten.json", &count);
     index = students;
     for (int i = 0; i < 2; ++i) {
         printf("Name: %s, Vorname: %s, Geburtstag: %d.%d.%d\n", index->nname, index->vname, index->gtag.tag,
