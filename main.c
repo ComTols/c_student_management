@@ -189,7 +189,7 @@ int menuAnzeige(int MenuChoice,int WhereInMenu)
             printf("6. L\x94sche Sch\x81ler\n\n");
 
             gotoxy(21, 21);
-            printf(" Dr\x81 \bcke ESC zum speichern und verlassen");
+            printf(" Dr\x81 \bcke ESC zum speichern und verlassen.");
 
             break;
 
