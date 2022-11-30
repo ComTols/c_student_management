@@ -2,7 +2,6 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <windows.h>
-#include <ctype.h>
 
 COORD coord = { 0, 0 };
 
@@ -238,12 +237,21 @@ void CheckKey() {
 
     while (kbhit()) {
         key=getch();
+        if (key == 13){                 //Normale TastenKeys werden abgefragt bevor das zweite Mal getch() ausgeführt wird.
+
+            printf("Enter wurde gedrückt");
+        }
+        if (key == 27) {
+            system ("cls");
+
+            exit(0);
+        }
         if (key == 224) {
             do {
                 key=getch();
             } while(key==224);
             switch (key) {
-                case 72:                       //72    oder 112 für p
+                case 72:                       //72 ist KeyCodeValue für Up-Arrow
                     //printf("up");
                     WhereInMenu--;
                     if (WhereInMenu < 1)
@@ -252,10 +260,8 @@ void CheckKey() {
                     }
                     menuAnzeige(WhereInMenu,WhereInMenu);
                     break;
-              //  case 75:                 //enter --> Programm wird gestartet
-              //      printf("left");
-              //      break;
-                case 80:                //80 oder 112 für p für 148
+
+                case 80:                 //80 ist KeyCodeValue für Down-Arrow
 
                     WhereInMenu++;
                     if (WhereInMenu > 6)
@@ -270,9 +276,10 @@ void CheckKey() {
     }}
 
 
-
 int main() {
     menuAnzeige(1,1);
-    while (1) {
-            CheckKey();
+    while (1) {     //viele ressourcen
+                     CheckKey();
+        Sleep(10);   //spart Ressouren
+
 }}
