@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <windows.h>
 
+
 COORD coord = { 0, 0 };
 
 void gotoxy(int x, int y) {
@@ -10,6 +11,10 @@ void gotoxy(int x, int y) {
 
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
+
+
+
+
 
 int menuAnzeige(int MenuChoice,int WhereInMenu)
 {
@@ -19,6 +24,7 @@ int menuAnzeige(int MenuChoice,int WhereInMenu)
     {
         case 1:
             system ("cls");
+
 
             gotoxy(17, 5);
             printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 STUDENTEN-MANAGEMENT-PROGRAMM \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
@@ -239,11 +245,12 @@ void CheckKey() {
         key=getch();
         if (key == 13){                 //Normale TastenKeys werden abgefragt bevor das zweite Mal getch() ausgeführt wird.
 
-            printf("Enter wurde gedrückt");
+            printf("Enter wurde gedrueckt. Die Funktion %d wird ausgeführt", WhereInMenu);
+            //Funktion Ausführen
         }
         if (key == 27) {
             system ("cls");
-
+            //Funktion zum Speichern ausführen
             exit(0);
         }
         if (key == 224) {
