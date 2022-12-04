@@ -28,7 +28,11 @@ Zeigt das Menü an und färbt den ausgewählten Menüpunkt rot.
 
 Rückgabewert:
 `int`: 0 bei Erfolg
-
+---
+### `Logo()`
+Zeigt das DHBW-Logo in der Konsole an.
+Rückgabewert:
+`void`
 ---
 ### `CheckKey()`
 Überprüft, ob eine Taste gedrückt wurde.
