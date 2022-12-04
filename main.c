@@ -8,75 +8,102 @@ COORD coord = { 0, 0 };
 void goToXY(int x, int y);
 int menuAnzeige(int MenuChoice);
 void CheckKey();
+void logo();
 
 void goToXY(int x, int y) {
     coord.X = x; coord.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
+void logo(){
+        goToXY(22, 1);
+        printf(" (            )                       \n");
+        goToXY(22, 2);
+        printf(" )\\ )      ( /(       (      (  (     \n");
+        goToXY(22, 3);
+        printf("(()/(      )\\())    ( )\\     )\\))(   '\n");
+        goToXY(22, 4);
+        printf(" /(_))    ((_)\\     )((_)   ((_)()\\ ) \n");
+        goToXY(22, 5);
+        printf("(_))_      _((_)   ((_)_    _(())\\_)()\n");
+        goToXY(22, 6);
+        printf(" |   \\    | || |    | _ )   \\ \\((_)/ /\n");
+        goToXY(22, 7);
+        printf(" | |) |   | __ |    | _ \\    \\ \\/\\/ / \n");
+        goToXY(22, 8);
+        printf(" |___/    |_||_|    |___/     \\_/\\_/  \n");
+}
+
 int menuAnzeige(int MenuChoice)
 {
     //Versteckt den Courser (um ihn wieder zu aktivieren printf("\33[?25h");
+
+    int a = 1;     // sets &WhereInMenu to 1 or something
+
     printf("\33[?25l");
 
     system ("cls");
-    goToXY(17, 5);
+    logo();
+    goToXY(17, 10);
     printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 STUDENTEN-MANAGEMENT-PROGRAMM \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
 
-    goToXY(26, 7);
+    goToXY(17, 24);
+    printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
+
+    goToXY(26, 12);
     printf("1. Sch\x81ler eintragen\n\n");
 
-    goToXY(26, 9);
+    goToXY(26, 14);
     printf("2. Sch\x81ler hinzuf\x81gen\n\n");
 
-    goToXY(26, 11);
+    goToXY(26, 16);
     printf("3. Anzahl der Sch\x81ler\n\n");
 
-    goToXY(26, 13);
+    goToXY(26, 18);
     printf("4. Zeige Sch\x81ler \n\n");
 
-    goToXY(26, 15);
+    goToXY(26, 20);
     printf("5. Zeige alle Sch\x81ler\n\n");
 
-    goToXY(26, 17);
+    goToXY(26, 22);
     printf("6. L\x94sche Sch\x81ler\n\n");
 
     switch (MenuChoice)
     {
         case 1:
-            goToXY(26, 7);
+            goToXY(26, 12);
             printf("\033[0;31m");       //Auswahl 1 gefärbt
             printf("1. Sch\x81ler eintragen\n\n");
             printf("\033[0m");
             break;
         case 2:
             printf("\033[0;31m");       //Auswahl 2 gefärbt
-            goToXY(26, 9);
+            goToXY(26, 14);
             printf("2. Sch\x81ler hinzuf\x81gen\n\n");
             printf("\033[0m");
             break;
         case 3:
             printf("\033[0;31m");       //Auswahl 3 gefärbt
-            goToXY(26, 11);
+            goToXY(26, 16);
             printf("3. Anzahl der Sch\x81ler\n\n");
             printf("\033[0m");
             break;
         case 4:
-            goToXY(26, 13);
+            goToXY(26, 18);
             printf("\033[0;31m");       //Auswahl 4 gefärbt
             printf("4. Zeige Sch\x81ler \n\n");
             printf("\033[0m");
             break;
         case 5:
             printf("\033[0;31m");       //Auswahl 5 gefärbt
-            goToXY(26, 15);
+            goToXY(26, 20);
             printf("5. Zeige alle Sch\x81ler\n\n");
             printf("\033[0m");
             break;
 
         case 6:
             printf("\033[0;31m");       //Auswahl 6 gefärbt
-            goToXY(26, 17);
+            goToXY(26, 22);
             printf("6. L\x94sche Sch\x81ler\n\n");
             printf("\033[0m");
             break;
@@ -84,7 +111,7 @@ int menuAnzeige(int MenuChoice)
             system ("cls");
             printf("\nEaster Egg");
     }
-    goToXY(21, 21);
+    goToXY(21, 26);
     printf(" Dr\x81 \bcke ESC zum speichern und verlassen");
     return 0;
 }
@@ -92,8 +119,6 @@ int menuAnzeige(int MenuChoice)
 void CheckKey() {
     int WhereInMenu;
     int key;
-    char KeyTouched;
-
 
     while (kbhit()) {
         key=getch();
@@ -134,7 +159,6 @@ void CheckKey() {
         }
     }
 }
-
 
 int main() {
     menuAnzeige(1);
