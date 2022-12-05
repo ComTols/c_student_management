@@ -41,6 +41,7 @@ Student *getCurrent(Liste list) {
 }       //returns address of current list item
 
 
+
 Student *next(Liste list) {
     //TOD: Abfangen, ob Ende der Liste
     Student *s = getCurrent(list);
