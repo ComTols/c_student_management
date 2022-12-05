@@ -9,7 +9,6 @@ typedef struct {
 } Datum;        //struct for date
 
 typedef struct {
-    char *vname;
     char *nname;
     int id;
     Datum gtag;
