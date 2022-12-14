@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 
 typedef struct {
@@ -23,13 +24,12 @@ typedef struct {
     int length;
     int listIndex;
 } Liste;        //struct for List
+
 Liste studentlist;
 
 Student *getCurrent(Liste list) {
-    //TOD: Abfangen, ob Ende der Liste
     Student *s = list.head;
     for(int i = 0; i < list.listIndex; i++) {
-        //TOD: Null abfangen
         s = s->next;
         if(s == NULL) {
             s=list.tail;
@@ -38,25 +38,72 @@ Student *getCurrent(Liste list) {
         }
     }
     return s;
-}       //returns address of current list item
-
-
+} //returns address of current list item
 
 Student *next(Liste list) {
-    //TOD: Abfangen, ob Ende der Liste
     Student *s = getCurrent(list);
     s = s->next;
-    list.listIndex++;
+    if (s!=NULL){
+        list.listIndex++;
+    }
     return s;
 } //moves the pointer to the next item
+  //returns NULL if it tried to step over your last item
 
 Student *inputStudent(){
     Student st1;
-    printf("Wie lautet der Nachname?\n");
+    printf("Last name:\n");
     char *buffer = malloc(5 * sizeof(char));
-    st1.nname = gets(buffer);
-    printf("Nachname: %s", st1.nname);
+    st1->nname = gets(buffer); //printf("Nachname: %s", st1.nname); to check if it works
     //TOD: andere Inputs implementieren
+    printf("Id:\n");
+    st1.id = gets();
+    printf("Birthday [DD.MM.YYYY]:\n");
+    scanf_s("%d.%d.%d", &st1.gtag.tag, &st1.gtag.monat, &st1.gtag.jahr);
+    if (st1.gtag.tag < 1 || st1.gtag.tag > 31 || st1.gtag.monat < 1 || st1.gtag.monat > 12){
+        printf("Error: Wrong input! Please repeat!\n");
+        bool again = true;
+        while (again){
+            scanf_s("%d.%d.%d", &st1.gtag.tag, &st1.gtag.monat, &st1.gtag.jahr);
+            if (st1.gtag.tag > 0 || st1.gtag.tag < 31 || st1.gtag.monat > 0 || st1.gtag.monat < 12){
+                again = false;
+            }else{
+                printf("Error: Wrong input! Please repeat!\n");
+            }
+        }
+    }
+
+    printf("Day of immatriculation [DD.MM.YYYY]:\n");
+    scanf_s("%d.%d.%d", &st1.beginn.tag, &st1.beginn.monat, &st1.beginn.jahr);
+    if (st1.beginn.tag < 1 || st1.beginn.tag > 31 || st1.beginn.monat < 1 || st1.beginn.monat > 12){
+        printf("Error: Wrong input! Please repeat!\n");
+        bool again = true;
+        while (again){
+            scanf_s("%d.%d.%d", &st1.beginn.tag, &st1.beginn.monat, &st1.beginn.jahr);
+            if (st1.beginn.tag > 0 || st1.beginn.tag < 31 || st1.beginn.monat > 0 || st1.beginn.monat < 12){
+                again = false;
+            }else{
+                printf("Error: Wrong input! Please repeat!\n");
+            }
+        }
+    }
+
+    printf("Expected day of graduation [DD.MM.YYYY]:\n");
+    scanf_s("%d.%d.%d", &st1.ende.tag, &st1.ende.monat, &st1.ende.jahr);
+    if (st1.ende.tag < 1 || st1.ende.tag > 31 || st1.ende.monat < 1 || st1.ende.monat > 12){
+        printf("Error: Wrong input! Please repeat!\n");
+        bool again = true;
+        while (again){
+            scanf_s("%d.%d.%d", &st1.ende.tag, &st1.ende.monat, &st1.ende.jahr);
+            if (st1.ende.tag > 0 || st1.ende.tag < 31 || st1.ende.monat > 0 || st1.ende.monat < 12){
+                again = false;
+            }else{
+                printf("Error: Wrong input! Please repeat!\n");
+            }
+        }
+    }
+    return &st1;
+
 } //lets the user input student data and returns the address of the new item
 
 int addStudent(){
@@ -73,6 +120,7 @@ int addStudent(){
 int getNumberOfStudents(Liste list) {
     Student *s;
     int i = 0;
+    list.listIndex = 0;
     while (s != NULL) {
         s = next(list);
         i++;
@@ -101,3 +149,5 @@ int main(){
     
 
 }
+
+//printf("Error: List end overreach\n");
