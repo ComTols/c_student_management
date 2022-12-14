@@ -112,7 +112,7 @@ int addStudent(){
     Student *following = s->next;
     //Evtl. null abfangen?
     s->next = new;
-    new-> next = following;
+    new->next = following;
     return 0;
     //Neuen Eintrag an alphabetisch richtige position Einfügen
 } //adds another student to the list
@@ -128,16 +128,66 @@ int getNumberOfStudents(Liste list) {
     return i;
 } // returns the number of total students
 
-void printStudent(int id){
+Student *findStudent(int id, Liste list){
+    Student *s = list.head;
+    Student *target;
+    for(int i = 0; i < list.length; i++) {
+        s = s->next;
+        if (s!=NULL){
+            list.listIndex++;
+        }
+        if(s->id == id) {
+            target = s;
+        }
+    }
+    return target;
+}
 
+void printStudent(int id, Liste list){
+    Student *s = findStudent(id, list);
+    printf("Name: %c\n", s->nname);
+    printf("Id: %d\n", s->id);
+    printf("Birthday: %d.%d.%d\n", s->gtag.tag, s->gtag.monat, s->gtag.jahr);
+    printf("Day of immatriculation: %d.%d.%d\n", s->beginn.tag, s->beginn.monat, s->beginn.jahr);
+    printf("Expected day of graduation: %d.%d.%d\n", s->ende.tag, s->ende.monat, s->ende.jahr);
 } //prints a student
 
-void printAllStudents(){
-
+void printAllStudents(Liste list){
+    Student *s = list.head;
+    for(int i = 0; i < list.length; i++) {
+        printf("Name: %c\n", s->nname);
+        printf("Id: %d\n", s->id);
+        printf("Birthday: %d.%d.%d\n", s->gtag.tag, s->gtag.monat, s->gtag.jahr);
+        printf("Day of immatriculation: %d.%d.%d\n", s->beginn.tag, s->beginn.monat, s->beginn.jahr);
+        printf("Expected day of graduation: %d.%d.%d\n", s->ende.tag, s->ende.monat, s->ende.jahr);
+        s = s->next;
+        if(s == NULL) {
+            s=list.tail;
+            break;
+        }
+    }
 } //prints all students in alphabetical order
 
-void deleteStudent(int id){
-
+void deleteStudent(int id, Liste list){
+    Student *s = findStudent(id, list);
+    Student *latest;
+    Student *following;
+    s->nname = NULL;
+    s->id = 0;
+    s->gtag.monat = 0;
+    s->gtag.monat = 0;
+    s->gtag.jahr = 0;
+    s->beginn.monat = 0;
+    s->beginn.monat = 0;
+    s->beginn.jahr = 0;
+    s->ende.monat = 0;
+    s->ende.monat = 0;
+    s->ende.jahr = 0;
+    s->next = NULL;
+    following = next(list);
+    list.listIndex -= 2;
+    latest = getCurrent(list);
+    latest->next = following;
 } //deletes a student from the list
 
 
