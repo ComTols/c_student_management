@@ -19,22 +19,26 @@ StringStream stream_mkStringStream() {
     return stream_mkStringStreamSize(STREAM_SIZE);
 }
 StringStream stream_mkStringStreamSize(int size) {
-    StringStream stream;
-    stream.size = 0;
-    stream.maxLoad = 0;
+    StringStream ret;
+    ret.size = 0;
+    ret.maxLoad = 0;
 
-    int maxLoad = 1;
-    while (maxLoad < size) {
-        maxLoad *= 2;
+    // get sufficient capacity
+    unsigned int capacity = 1;
+    while (capacity < size)
+    {
+        capacity <<= 1;
     }
 
-    stream.str = calloc(maxLoad, sizeof(char));
-    if(stream.str) {
-        stream.maxLoad = maxLoad;
-        stream_terminate(&stream);
+    // allocate
+    ret.str = malloc(capacity * sizeof(char));
+    if (ret.str)
+    {
+        ret.maxLoad = capacity;
+        stream_terminate(&ret);
     }
 
-    return stream;
+    return ret;
 }
 StringStream stream_mkStringStreamFromString(char *str) {
     int size = strlen(str);
@@ -49,32 +53,40 @@ StringStream stream_mkStringStreamFromString(char *str) {
 }
 
 char stream_increase(StringStream *stream, int inc) {
-    int newSize = stream->size + inc + 1;
+    int newSize = stream->size + inc;
 
-    if(newSize > stream->maxLoad) {
-        int maxLoad = stream->maxLoad;
-        if(!maxLoad) {
-            maxLoad = 1;
+    if (newSize + 1 >= stream->maxLoad)
+    {
+        // get required size
+        int capacity = stream->maxLoad;
+        if (!capacity)
+        {
+            capacity = 1;
         }
-        while (maxLoad <= newSize) {
-            maxLoad *= 2;
+        while (capacity <= newSize + 1)
+        {
+            capacity <<= 1;
         }
 
-        char *newString = realloc(stream->str, maxLoad * sizeof(char));
-        if(!newString) {
-            newString = calloc(maxLoad, sizeof(char));
-            memcpy(newString, stream->str, maxLoad * sizeof(char));
+        // must reallocate
+        char *oldMem = stream->str;
+        stream->str = realloc(stream->str, capacity * sizeof(char));
+        if (!stream->str)
+        {
+            // must allocate in new location
+            stream->str = malloc(capacity * sizeof(char));
+            // copy existing characters
+            memcpy(stream->str, oldMem, stream->maxLoad * sizeof(char));
 
-            free(stream->str);
-            stream->str = newString;
-        } else if(newString != stream->str) {
-            //free(stream->str);
-            stream->str = newString;
+            // update pointers
+            free(oldMem);
         }
-        stream->maxLoad = maxLoad;
-        return !0;
+
+        stream->maxLoad = capacity;
+        return !0; // true
     }
-    return 0;
+
+    return 0; // false
 }
 
 int stream_available(StringStream *stream) {

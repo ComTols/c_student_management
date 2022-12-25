@@ -38,7 +38,7 @@ void list_reduce();
 //Reverses the order of the elements of an array -- the first becomes the last, and the last becomes the first.
 void list_reverse();
 //Sorts the elements of an array.
-void list_sort();
+void list_sort(LinkedList *list, int(*compare)(Item* first, Item* secound));
 
 //Gibt ein Element an einer bestimmten Stelle zurück
 void *list_get(LinkedList *list, int index);

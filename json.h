@@ -60,8 +60,8 @@ void json_obj_put_string(Json *obj, char *key, char* val);
 void json_obj_put_int(Json *obj, char *key, int val);
 void json_obj_put_float(Json *obj, char *key, float val);
 
-StringStream json_stringify(Json j, bool style, int tab, bool isInDic);
-char* json_dump(Json j, int *n);
+StringStream json_stringify(Json j);
+char* json_dump(Json j);
 
 void json_free(Json *j);
 

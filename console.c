@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <conio.h>
-#include <stdlib.h>
-#include <windows.h>
-
 //
 // Created by Justin Kreuzmann on 23.12.2022.
 //
@@ -17,14 +12,16 @@ void con_showData();
 void con_showDataFull();
 void con_deleteData();
 
-Student mkStudent(char *vname, char *nname, int id, Datum gtag, Datum beginn, Datum ende) {
-    Student s;
-    s.vname = vname;
-    s.nname = nname;
-    s.id = id;
-    s.gtag = gtag;
-    s.beginn = beginn;
-    s.ende = ende;
+LinkedList STUDENTS;
+
+Student *mkStudent(char *vname, char *nname, int id, Datum gtag, Datum beginn, Datum ende) {
+    Student *s = calloc(1, sizeof(Student));
+    s->vname = vname;
+    s->nname = nname;
+    s->id = id;
+    s->gtag = gtag;
+    s->beginn = beginn;
+    s->ende = ende;
 
     return s;
 }
@@ -168,7 +165,12 @@ MenuItem *con_mkMenu(int *size) {
     return m;
 }
 
-void con_input(MenuItem *items,int length, int *pos) {
+void con_input(MenuItem *items,int length, int *pos, LinkedList *students) {
+
+    Student* head = (Student *)students->head->value;
+    Student* head2 = (Student *)STUDENTS.head->value;
+
+
     //Warte auf Input
     int key = getch();
 
@@ -197,11 +199,12 @@ void con_input(MenuItem *items,int length, int *pos) {
             break;
         case 13:
             //Enter
-            items[*pos].callback();
+            items[*pos].callback(students);
             break;
         case 27:
             //ESC
             //TODO: Speichern
+            save(students);
             exit(0);
             break;
     }
@@ -216,20 +219,20 @@ void con_clamp(int *in, int max) {
     }
 }
 
-void con_newData() {
+void con_newData(LinkedList *student) {
     int y = 0;
     int height = 19;
     con_frame(height, &y);
 
     goToXY(22,y);
     printf("Vorname: ");
-    char vname[100];
-    scanf("%s99", &vname);
+    char *vname = calloc(100, sizeof(char));
+    scanf("%s99", vname);
 
     goToXY(22,(y += 2));
     printf("Nachname: ");
-    char nname[100];
-    scanf("%s99", &nname);
+    char *nname = calloc(100, sizeof(char));;
+    scanf("%s99", nname);
 
     goToXY(22,(y += 2));
     printf("ID: ");
@@ -325,8 +328,9 @@ void con_newData() {
     printf("Druecken Sie j um zu bestaetigen...");
 
     if(getch() == 106) {
-        Student newStudent = mkStudent(vname, nname, id, gTag, beginn, ende);
-        //TODO: Insert
+        Student *newStudent = mkStudent(vname, nname, id, gTag, beginn, ende);
+        list_push(student, newStudent);
+        list_sort(student, compareStudents);
         goToXY(22,(y += 2));
         printf("Gespeichert! Weiteren hinzufuegen -> Enter; Menue -> Arrow");
     } else {
@@ -334,7 +338,7 @@ void con_newData() {
         printf("Verworfen! Erneut versuchen -> Enter; Menue -> Arrow");
     }
 }
-void con_editData() {
+void con_editData(LinkedList *student) {
     int y = 0;
     int height = 19;
     con_frame(height, &y);
@@ -345,52 +349,133 @@ void con_editData() {
     int id;
     scanf("%d", &id);
 
-    //TODO: Suche studenten
+    Item *current = student->head;
 
-    if(!0) {
+    while (current) {
+        if (((Student*)current->value)->id == id) {
+            break;
+        }
+        current = current->next;
+    }
+
+    if(current) {
         con_frame(height, &y);
         goToXY(22,y);
         printf("Folgende Informationen wurden gefunden:");
 
         goToXY(22,(y += 2));
-        printf("[1] Vorname: %s\t\t[2] Nachname: %s", "Max", "Mustermann");
+        printf("[1] Vorname: %s\t\t[2] Nachname: %s", ((Student*)current->value)->vname, ((Student*)current->value)->nname);
 
         goToXY(22,(y += 2));
-        printf("[3] ID: %d", 12345);
+        printf("[3] ID: %d", ((Student*)current->value)->id);
 
         goToXY(22,(y += 2));
-        printf("[4] Geburtstag: %d.%d.%d", 1,9,2001);
+        printf("[4] Geburtstag: %d.%d.%d", ((Student*)current->value)->gtag.tag, ((Student*)current->value)->gtag.monat, ((Student*)current->value)->gtag.jahr);
 
         goToXY(22,(y += 2));
-        printf("[5] Beginn: %d.%d.%d", 1,9,2001);
+        printf("[5] Beginn: %d.%d.%d", ((Student*)current->value)->beginn.tag, ((Student*)current->value)->beginn.monat, ((Student*)current->value)->beginn.jahr);
 
         goToXY(22,(y += 2));
-        printf("[6] Ende: %d.%d.%d", 1,9,2001);
+        printf("[6] Ende: %d.%d.%d", ((Student*)current->value)->ende.tag, ((Student*)current->value)->ende.monat, ((Student*)current->value)->ende.jahr);
 
         goToXY(22,(y += 2));
         printf("Was moechten Sie bearbeiten?");
 
         int key = getch();
+        con_frame(height, &y);
+        goToXY(22,y);
         switch (key) {
             case 49:
-                //1
+                printf("Geben Sie den neuen Vornamen ein:");
+                char *vname = calloc(100, sizeof(char ));
+                scanf("%s", vname);
+                ((Student*)current->value)->vname = vname;
                 break;
             case 50:
-                //2
+                printf("Geben Sie den neuen Nachnamen ein:");
+                char *nname = calloc(100, sizeof(char ));
+                scanf("%s", nname);
+                ((Student*)current->value)->nname = nname;
                 break;
             case 51:
-                //3
+                printf("Geben Sie die neue ID ein:");
+                int id = 0;
+                scanf("%d", &id);
+                ((Student*)current->value)->id = id;
                 break;
             case 52:
-                //4
+                printf("Geben Sie das neue Geburtsdatum ein:");
+
+                goToXY(22,(y += 2));
+                printf("Tag: ");
+                int gday = 0;
+                scanf("%d", &gday);
+
+                goToXY(22,(y += 2));
+                printf("Monat: ");
+                int gmonth = 0;
+                scanf("%d", &gmonth);
+
+                goToXY(22,(y += 2));
+                printf("Jahr: ");
+                int gyear = 0;
+                scanf("%d", &gyear);
+
+
+                ((Student*)current->value)->gtag.tag = gday;
+                ((Student*)current->value)->gtag.monat = gmonth;
+                ((Student*)current->value)->gtag.jahr = gyear;
                 break;
             case 53:
-                //5
+                printf("Geben Sie das neue Startdatum ein:");
+
+                goToXY(22,(y += 2));
+                printf("Tag: ");
+                int sday = 0;
+                scanf("%d", &sday);
+
+                goToXY(22,(y += 2));
+                printf("Monat: ");
+                int smonth = 0;
+                scanf("%d", &smonth);
+
+                goToXY(22,(y += 2));
+                printf("Jahr: ");
+                int syear = 0;
+                scanf("%d", &syear);
+
+
+                ((Student*)current->value)->beginn.tag = sday;
+                ((Student*)current->value)->beginn.monat = smonth;
+                ((Student*)current->value)->beginn.jahr = syear;
                 break;
             case 54:
-                //6
+                printf("Geben Sie das neue Enddatum ein:");
+
+                goToXY(22,(y += 2));
+                printf("Tag: ");
+                int day = 0;
+                scanf("%d", &day);
+
+                goToXY(22,(y += 2));
+                printf("Monat: ");
+                int month = 0;
+                scanf("%d", &month);
+
+                goToXY(22,(y += 2));
+                printf("Jahr: ");
+                int year = 0;
+                scanf("%d", &year);
+
+
+                ((Student*)current->value)->ende.tag = day;
+                ((Student*)current->value)->ende.monat = month;
+                ((Student*)current->value)->ende.jahr = year;
                 break;
         }
+
+        goToXY(22,(y += 2));
+        printf("Uebernommen! Weiteren aendern -> Enter; Menue -> Arrow");
     } else {
         con_frame(height, &y);
         goToXY(22,y);
@@ -401,18 +486,18 @@ void con_editData() {
     }
 
 }
-void con_countData() {
+void con_countData(LinkedList *student) {
     int y = 0;
     int height = 5;
     con_frame(height, &y);
 
     goToXY(22,y);
-    printf("Aktuell sind %d Datensaetze gespeichert.", 0);
+    printf("Aktuell sind %d Datensaetze gespeichert.", student->size);
 
     goToXY(22,(y += 2));
     printf("Erneut zaehlen -> Enter; Menue -> Arrow");
 }
-void con_showData() {
+void con_showData(LinkedList *student) {
     int y = 0;
     int height = 19;
     con_frame(height, &y);
@@ -423,27 +508,34 @@ void con_showData() {
     int id;
     scanf("%d", &id);
 
-    //TODO: Suche studenten
+    Item *current = student->head;
 
-    if(!0) {
+    while (current) {
+        if (((Student*)current->value)->id == id) {
+            break;
+        }
+        current = current->next;
+    }
+
+    if(current) {
         con_frame(height, &y);
         goToXY(22,y);
         printf("Folgende Informationen wurden gefunden:");
 
         goToXY(22,(y += 2));
-        printf("Vorname: %s\t\tNachname: %s", "Max", "Mustermann");
+        printf("Vorname: %s\t\tNachname: %s", ((Student*)current->value)->vname, ((Student*)current->value)->nname);
 
         goToXY(22,(y += 2));
-        printf("ID: %d", 12345);
+        printf("ID: %d", ((Student*)current->value)->id);
 
         goToXY(22,(y += 2));
-        printf("Geburtstag: %d.%d.%d", 1,9,2001);
+        printf("Geburtstag: %d.%d.%d", ((Student*)current->value)->gtag.tag, ((Student*)current->value)->gtag.monat, ((Student*)current->value)->gtag.jahr);
 
         goToXY(22,(y += 2));
-        printf("Beginn: %d.%d.%d", 1,9,2001);
+        printf("Beginn: %d.%d.%d", ((Student*)current->value)->beginn.tag, ((Student*)current->value)->beginn.monat, ((Student*)current->value)->beginn.jahr);
 
         goToXY(22,(y += 2));
-        printf("Ende: %d.%d.%d", 1,9,2001);
+        printf("Ende: %d.%d.%d", ((Student*)current->value)->ende.tag, ((Student*)current->value)->ende.monat, ((Student*)current->value)->ende.jahr);
 
         goToXY(22,(y += 2));
         printf("Neue Abfrage -> Enter; Menue -> Arrow");
@@ -456,11 +548,28 @@ void con_showData() {
         printf("Erneut versuchen -> Enter; Menue -> Arrow");
     }
 }
-void con_showDataFull() {
-    printf("show2");
+void con_showDataFull(LinkedList *students) {
+    list_sort(students,compareStudents);
+    int y = 0;
+    int height = students->size * 2 + 5;
+    con_frame(height, &y);
+
+    goToXY(22,y);
+    printf("Es wurden %d Datensaetze gefunden:", students->size);
+
+    Item *current = students->head;
+    while (current) {
+        Student* value = (Student*)current->value;
+        goToXY(22,(y += 2));
+        printf("%s\t%s\t%d", value->vname, value->nname, value->id);
+        current = current->next;
+    }
+
+    goToXY(22,(y += 2));
+    printf("Erneut ausgeben -> Enter; Menue -> Arrow");
 
 }
-void con_deleteData() {
+void con_deleteData(LinkedList *student) {
     int y = 0;
     int height = 19;
     con_frame(height, &y);
@@ -471,27 +580,39 @@ void con_deleteData() {
     int id;
     scanf("%d", &id);
 
-    //TODO: Suche studenten
+    Item *parent = student->head;
+    Item *current = parent->next;
 
-    if(!0) {
+    if (((Student*)parent->value)->id == id) {
+        current = parent;
+    }
+
+    while (current) {
+        if (((Student*)current->value)->id == id) {
+            break;
+        }
+        current = current->next;
+    }
+
+    if(current) {
         con_frame(height, &y);
         goToXY(22,y);
         printf("Folgende Informationen wurden gefunden:");
 
         goToXY(22,(y += 2));
-        printf("Vorname: %s\t\tNachname: %s", "Max", "Mustermann");
+        printf("Vorname: %s\t\tNachname: %s", ((Student*)current->value)->vname, ((Student*)current->value)->nname);
 
         goToXY(22,(y += 2));
-        printf("ID: %d", 12345);
+        printf("ID: %d", ((Student*)current->value)->id);
 
         goToXY(22,(y += 2));
-        printf("Geburtstag: %d.%d.%d", 1,9,2001);
+        printf("Geburtstag: %d.%d.%d", ((Student*)current->value)->gtag.tag, ((Student*)current->value)->gtag.monat, ((Student*)current->value)->gtag.jahr);
 
         goToXY(22,(y += 2));
-        printf("Beginn: %d.%d.%d", 1,9,2001);
+        printf("Beginn: %d.%d.%d", ((Student*)current->value)->beginn.tag, ((Student*)current->value)->beginn.monat, ((Student*)current->value)->beginn.jahr);
 
         goToXY(22,(y += 2));
-        printf("Ende: %d.%d.%d", 1,9,2001);
+        printf("Ende: %d.%d.%d", ((Student*)current->value)->ende.tag, ((Student*)current->value)->ende.monat, ((Student*)current->value)->ende.jahr);
 
         goToXY(22,(y += 2));
         printf("Moechten Sie diese Daten loeschen? [j/n]");
@@ -499,7 +620,13 @@ void con_deleteData() {
         switch (getch()) {
             case 106:
             case 74:
-                //TODO: Löschen
+                if(parent != current) {
+                    parent->next = current->next;
+                    free(current);
+                } else {
+                    student->head = current;
+                }
+                student->size--;
                 goToXY(22,(y += 2));
                 printf("Geloescht! Naechsten loeschen -> Enter; Menue -> Arrow");
                 break;
@@ -515,4 +642,107 @@ void con_deleteData() {
         goToXY(22,(y += 2));
         printf("Erneut versuchen -> Enter; Menue -> Arrow");
     }
+}
+
+void save(LinkedList *data) {
+    list_print(data);
+    FILE *file = fopen(SAVE_PATH, "w+");
+    if(!file) {
+        exit(555);
+
+    }
+
+    Json j = json_mkJson(JSON_OBJ);
+    json_obj_put_int(&j, "size", data->size);
+
+    LinkedList jsonList = list_mkList();
+    Item *current = data->head;
+    while (current) {
+        Student *value = (Student*)current->value;
+        Json *j = calloc(1, sizeof (Json));
+        *j = json_mkJson(JSON_OBJ);
+
+        json_obj_put_string(j, "vname", value->vname);
+        json_obj_put_string(j, "nname", value->nname);
+        json_obj_put_int(j, "id", value->id);
+
+        Json *gday = calloc(1, sizeof (Json));
+        *gday = json_mkJson(JSON_OBJ);
+        json_obj_put_int(gday, "day", value->gtag.tag);
+        json_obj_put_int(gday, "month", value->gtag.monat);
+        json_obj_put_int(gday, "year", value->gtag.jahr);
+
+        json_obj_put(j, "geburtstag", gday);
+
+        Json *bday = calloc(1, sizeof (Json));
+        *bday = json_mkJson(JSON_OBJ);
+        json_obj_put_int(bday, "day", value->beginn.tag);
+        json_obj_put_int(bday, "month", value->beginn.monat);
+        json_obj_put_int(bday, "year", value->beginn.jahr);
+
+        json_obj_put(j, "beginn", bday);
+
+        Json *eday = calloc(1, sizeof (Json));
+        *eday = json_mkJson(JSON_OBJ);
+        json_obj_put_int(eday, "day", value->ende.tag);
+        json_obj_put_int(eday, "month", value->ende.monat);
+        json_obj_put_int(eday, "year", value->ende.jahr);
+
+        json_obj_put(j, "ende", eday);
+
+        list_push(&jsonList, j);
+
+        current = current->next;
+    }
+
+    Json list = json_list(jsonList);
+    json_obj_put(&j, "data", &list);
+
+    char* jsonSring = json_dump(j);
+
+    printf("%s", jsonSring);
+    fputs(jsonSring,file);
+
+    fclose(file);
+}
+
+LinkedList* load() {
+    //TODO: Load from File
+    Student *s1 = (Student *)calloc(1, sizeof (Student));
+    s1->id = 456;
+    s1->nname = "Max";
+    s1->vname = "Maxi";
+
+    Student *s2 = (Student *)calloc(1, sizeof (Student));
+    s2->id = 123;
+    s2->nname = "Hans";
+    s2->vname = "Hansi";
+
+    STUDENTS = list_mkList();
+    STUDENTS.size = 0;
+    STUDENTS.head = NULL;
+
+    list_push(&STUDENTS, s1);
+    list_push(&STUDENTS, s2);
+
+    list_print(&STUDENTS);
+    printf("%s", ((Student *)STUDENTS.head->value)->nname);
+    printf("%s", ((Student *)STUDENTS.head->value)->vname);
+    printf("%s", ((Student *)STUDENTS.head->next->value)->nname);
+    printf("%s", ((Student *)STUDENTS.head->next->value)->vname);
+
+    Student *head = (Student*)STUDENTS.head->value;
+    return &STUDENTS;
+}
+
+int compareStudents(Item *first, Item *sec) {
+    char *name1 = ((Student*)first->value)->nname;
+    char *name2 = ((Student*)sec->value)->nname;
+
+    int i = 0;
+    while (name1[i] == name2) {
+        i++;
+    }
+
+    return name2[i] - name1[i];
 }

@@ -224,7 +224,7 @@ void map_print(Map *map) {
         if(map->buckets[i]) {
             Entry *element = map->buckets[i];
             while (element) {
-                printf("{Key: \"%s\", Value: \"%s\"} ", (char*)element->key, (char*)element->value);
+                printf("{Key: \"%s\", Value: \"%s\" (%p)} ", (char*)element->key, (char*)element->value, element->value);
                 element = element->next;
             }
             printf("\n");

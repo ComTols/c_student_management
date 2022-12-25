@@ -166,9 +166,49 @@ void list_print(LinkedList *list) {
 
     Item *element = list->head;
     for (int i = 0; i < list->size; ++i) {
-        printf("\t[%d] -> %s\n", i, (char*)element->value);
+        printf("\t[%d] -> %s (%p)\n", i, (char*)element->value, element->value);
         element = element->next;
     }
 
     printf("#END LIST");
+}
+
+void swap(Item *parent, Item *sec) {
+    Item *child = parent->next;
+    parent->next = sec;
+    child->next = sec->next;
+    sec->next = child;
+}
+
+void list_sort(LinkedList *list, int(*compare)(Item* first, Item* secound)) {
+    Item *parent = list->head;
+    Item *current = parent->next;
+
+    if(parent && current) {
+        if(compare(parent,current) < 0) {
+            Item *tmp = parent;
+            list->head = current;
+            tmp->next = current->next;
+            current->next = tmp;
+
+            parent = list->head;
+            current = parent->next;
+        }
+    }
+
+    for (int i = 0; i < list->size; ++i) {
+        while (current) {
+            Item *next = current->next;
+            if(next) {
+                int result = compare(current, next);
+                if(result < 0) {
+                    swap(parent, next);
+                }
+            }
+            current = current->next;
+            parent = parent->next;
+        }
+        Item *parent = list->head;
+        Item *current = parent->next;
+    }
 }

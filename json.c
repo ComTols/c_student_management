@@ -5,6 +5,7 @@
 #include "string.h"
 #include "stdio.h"
 #include "stringstream.h"
+#include "map.h"
 
 #include "json.h"
 
@@ -140,122 +141,78 @@ void json_obj_put_float(Json *obj, char *key, float val) {
     json_obj_put(obj, key, jval);
 }
 
-StringStream json_stringify(Json j, bool style, int tab, bool isInDic) {
-    StringStream s;
-
-    if(style && !isInDic) {
-        s = stream_mkStringStream(tab);
-        for (int i = 0; i < tab; ++i) {
-            stream_fprintf(&s, "\t");
-        }
-    } else {
-        s = stream_mkStringStream();
-    }
+StringStream json_stringify(Json j) {
+    StringStream s = stream_mkStringStream();
 
     switch (j.type) {
+        case JSON_OBJ:
+            stream_fprintf(&s, "{");
+            Map *obj = &j.val.o;
+            for (int bucket = 0; bucket < obj->bucketsCount; ++bucket) {
+                if(obj->buckets[bucket]) {
+                    Entry *current = obj->buckets[bucket];
+                    while (current) {
+                        char* key = (char*) current->key;
+                        Json* value = (Json*) current->value;
+
+                        stream_fprintf(&s, "\"%s\":%s,", key, json_stringify(*value).str);
+                        current = current->next;
+                    }
+                }
+            }
+            stream_cursorBackwarts(&s, 1);
+            stream_fprintf(&s, "}");
+            break;
+        case JSON_LIST:
+            stream_fprintf(&s, "[");
+            LinkedList *list = &j.val.l;
+            Item *current = list->head;
+
+            while (current) {
+                Json *value = (Json*)current->value;
+
+
+                stream_fprintf(&s, "%s,", json_stringify(*value).str);
+
+                current = current->next;
+            }
+            stream_cursorBackwarts(&s, 1);
+            stream_fprintf(&s, "]");
+            break;
         case JSON_NULL:
             stream_fprintf(&s, JSON_NULL_S);
-            break;
-        case JSON_STR:
-            stream_fprintf(&s, "\"%s\"", j.val.s);
-            break;
-        case JSON_FLOAT:
-            stream_fprintf(&s, "%f", j.val.f);
-            break;
-        case JSON_INT:
-            stream_fprintf(&s, "%d", j.val.i);
             break;
         case JSON_BOOL:
             stream_fprintf(&s, "%s", j.val.b ? JSON_TRUE : JSON_FALSE);
             break;
-        case JSON_LIST:
-            if(!j.val.l.size) {
-                stream_fprintf(&s, "[]%s", style ? "\n": "");
-                break;
-            }
-
-            stream_fprintf(&s, "[%s", style ? "\n" : "");
-
-            for (int i = 0; i < j.val.l.size; ++i) {
-                //TODO: Optimieren
-                void *current = list_get(&j.val.l, i);
-                StringStream el_stream = json_stringify(*(Json*)current, style, tab + 1, false);
-                stream_fprintf(&s, "%s,%s", el_stream.str, style ? "\n" : "");
-                stream_clear(&el_stream);
-            }
-
-            stream_cursorBackwarts(&s, style ? 2 : 1);
-
-            if(style) {
-                stream_fprintf(&s, "\n");
-                for (int i = 0; i < tab; ++i) {
-                    stream_fprintf(&s, "\t");
-                }
-            }
-
-            stream_fprintf(&s, "]");
-
+        case JSON_STR:
+            stream_fprintf(&s, "\"%s\"", j.val.s);
             break;
-        case JSON_OBJ:
-            if(!j.val.o.entrysCount) {
-                stream_fprintf(&s, "{}%s", style ? "\n":"");
-                break;
-            }
-
-            stream_fprintf(&s, "{%s", style ? "\n":"");
-
-            for (int i = 0; i < j.val.o.bucketsCount; ++i) {
-                Entry *current = j.val.o.buckets[i];
-                while (current) {
-                    if(style) {
-                        for (int k = 0; k < tab + 1; ++k) {
-                            stream_fprintf(&s, "\t ");
-                        }
-                    }
-
-                    stream_fprintf(&s, "\"%s\":%s", (char*)current->key, style ? " ":"");
-
-                    StringStream el_stream = json_stringify(*(Json*)current->value, style, tab + 1, true);
-                    stream_fprintf(&s, "%s,%s", el_stream.str, style ? "\n":"");
-                    stream_clear(&el_stream);
-                    
-                    current = current->next;
-                }
-            }
-
-            stream_cursorBackwarts(&s, style ? 2 : 1);
-
-            if(style) {
-                stream_fprintf(&s, "\n");
-                for (int i = 0; i < tab; ++i) {
-                    stream_fprintf(&s, "\t");
-                }
-            }
-
-            stream_fprintf(&s, "}");
-
+        case JSON_INT:
+            stream_fprintf(&s, "%d", j.val.i);
+            break;
+        case JSON_FLOAT:
+            stream_fprintf(&s, "%f", j.val.f);
             break;
     }
-
     return s;
 }
-char* json_dump(Json j, int *n) {
-    StringStream s = json_stringify(j, false, 0, false);
-    *n = s.size;
 
-    stream_printFull(&s);
-    fusch(&s);
-    stream_printFull(&s);
+char* json_dump(Json j) {
+    //StringStream s = json_stringify(j, false, 0, false);
+    StringStream s = json_stringify(j);
+
+    //fusch(&s);
 
     char *string = calloc(s.size + 1, sizeof(char));
-    memcpy(string, s.str, *n+1);
+    memcpy(string, s.str, s.size+1);
     stream_clear(&s);
     return string;
 }
 
 void json_free(Json *j) {
     if(j->type == JSON_STR) {
-        free(&j->val.s);
+        //free(&j->val.s);
     } else if(j->type == JSON_LIST) {
         Item* current = j->val.l.head;
 

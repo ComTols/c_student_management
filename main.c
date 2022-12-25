@@ -1,15 +1,6 @@
-#include "stdlib.h"
-#include "stdio.h"
-
-#include "map.h"
-#include "linkedlist.h"
-#include "stringstream.h"
-#include "json.h"
-
-/*int main(int argc, char *argv[]) {
-
-    printf("Aus");
-
+#include "main.h"
+/*
+int main(int argc, char *argv[]) {
     Json out = json_mkJson(JSON_OBJ);
 
     Json list = json_mkJson(JSON_LIST);
@@ -33,20 +24,26 @@
     printf("%s\n", str);
 
     free(str);
+    getchar();
 
     //json_free(&out);
 
     return 0;
-}*/
+}
 #include "console.h"
-
+*/
 int main() {
+
+    LinkedList *students = load();
+
+    Student* head = (Student *)students->head->value;
+
     int menuSize;
     int menuPosition = 0;
     MenuItem *menu = con_mkMenu(&menuSize);
     con_redraw(menu, menuSize, &menuPosition);
     while (1) {
-        con_input(menu, menuSize, &menuPosition);
+        con_input(menu, menuSize, &menuPosition, students);
     }
 
     /*while (1) {
