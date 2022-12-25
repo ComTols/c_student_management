@@ -6,7 +6,7 @@
 #include "stringstream.h"
 #include "json.h"
 
-int main(int argc, char *argv[]) {
+/*int main(int argc, char *argv[]) {
 
     printf("Aus");
 
@@ -37,4 +37,19 @@ int main(int argc, char *argv[]) {
     //json_free(&out);
 
     return 0;
+}*/
+#include "console.h"
+
+int main() {
+    int menuSize;
+    int menuPosition = 0;
+    MenuItem *menu = con_mkMenu(&menuSize);
+    con_redraw(menu, menuSize, &menuPosition);
+    while (1) {
+        con_input(menu, menuSize, &menuPosition);
+    }
+
+    /*while (1) {
+        printf("%d\n", getch());
+    }*/
 }

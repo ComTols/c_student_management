@@ -151,3 +151,35 @@ Gibt die den Wert einer Potenz mal dem Faktor 10 zurück.
 | exponent  | int | Der Exponent der Potenz |
 
 Rückgabewert: `int`: Den Wert der Potenz mal 10
+### `goToXY(x,y)`
+Setzt den Cursor zum Schreiben in den Output-Stream auf die übergebene Position.
+
+| Parameter | Typ | Beschreibung                        |
+|-----------|-----|-------------------------------------|
+| x         | int | Position auf der horizontalen Achse |
+| y         | int | Position auf der vertikalen Achse   |
+
+Rückgabewert:
+`void`
+
+---
+### `menuAnzeige(MenuChoice): int`
+Zeigt das Menü an und färbt den ausgewählten Menüpunkt rot.
+
+| Parameter  | Typ | Beschreibung                      |
+|------------|-----|-----------------------------------|
+| MenuChoice | int | Aktuell ausgewählter Menüpunkt    |
+
+Rückgabewert:
+`int`: 0 bei Erfolg
+---
+### `Logo()`
+Zeigt das DHBW-Logo in der Konsole an.
+Rückgabewert:
+`void`
+---
+### `CheckKey()`
+Überprüft, ob eine Taste gedrückt wurde.
+
+Rückgabewert:
+`void`
