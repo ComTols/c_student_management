@@ -298,7 +298,7 @@ void con_newData(LinkedList *student) {
     goToXY(22,(y += 2));
     printf("Jahr: ");
     int endeJahr;
-    scanf("%d", &beginnJahr);
+    scanf("%d", &endeJahr);
 
     Datum ende = mkDatum(endeTag, endeMonat, endeJahr);
 
