@@ -63,6 +63,10 @@ void json_obj_put_float(Json *obj, char *key, float val);
 StringStream json_stringify(Json j);
 char* json_dump(Json j);
 
+Json json_read(char *path);
+Json *json_list_get(Json *list, unsigned int idx);
+Json *json_obj_get(Json *obj, char *key);
+
 void json_free(Json *j);
 
 #endif //C_STUDENT_MANAGEMENT_JSON_H

@@ -179,11 +179,38 @@ void stream_printFull(StringStream *stream) {
     printf("#String Stream\n\tSize: %d; Capacity: %d\n\t\"%s\"\n#String Stream\n", stream->size, stream->maxLoad, stream->str);
 }
 
-void fusch(StringStream *s) {
-    for (int i = 0; i < s->size; ++i) {
-        if(s->str[i] == '\0') {
-            s->str[i] = '0';
+char *stream_substr(StringStream *s, unsigned int i, int n)
+{
+    if (n == 0 || i < 0 || i >= s->size || i + n < 0 || i + n > s->size)
+    {
+        return NULL;
+    }
+
+    unsigned int length = abs(n);
+
+    char *ret = malloc((length + 1) * sizeof(char));
+    if (n > 0)
+    {
+        // copy memory
+        memcpy(ret, s->str + i, length);
+    }
+    else
+    {
+        // copy memory
+        memcpy(ret, s->str + i - length, length);
+
+        // reverse string if negative length
+        for (unsigned int idx = 0; idx < length / 2; idx++)
+        {
+            unsigned int idx2 = length - idx - 1;
+
+            ret[idx] ^= ret[idx2];
+            ret[idx2] = ret[idx] ^ ret[idx2];
+            ret[idx] = ret[idx] ^ ret[idx2];
         }
     }
-    s->str[s->size] = '\0';
+
+    ret[length] = '\0';
+
+    return ret;
 }

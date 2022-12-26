@@ -31,7 +31,7 @@ void stream_clear(StringStream *stream);
 void stream_print(StringStream *stream);
 void stream_printFull(StringStream *stream);
 
-void fusch(StringStream *s);
+char *stream_substr(StringStream *s, unsigned int i, int n);
 
 
 #endif //C_STUDENT_MANAGEMENT_STRINGSTREAM_H

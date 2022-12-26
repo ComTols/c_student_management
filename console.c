@@ -5,12 +5,12 @@
 #include "console.h"
 
 COORD coord = { 0, 0 };
-void con_newData();
-void con_editData();
-void con_countData();
-void con_showData();
-void con_showDataFull();
-void con_deleteData();
+void con_newData(LinkedList *student);
+void con_editData(LinkedList *student);
+void con_countData(LinkedList *student);
+void con_showData(LinkedList *student);
+void con_showDataFull(LinkedList *student);
+void con_deleteData(LinkedList *student);
 
 LinkedList STUDENTS;
 
@@ -707,6 +707,20 @@ void save(LinkedList *data) {
 }
 
 LinkedList* load() {
+    Json out = json_read(SAVE_PATH);
+
+    if(out.type != JSON_OBJ) {
+        printf("Es konnten keine Daten gelesen werden. Bitte überprüfen Sie die Datei <<%s>> und beachten Sie die Anforderungen an das Format!", SAVE_PATH);
+        exit(555);
+        return NULL;
+    }
+
+    char *str = json_dump(out);
+    printf("%s", str);
+
+    Json *size = json_obj_get(&out, "lol");
+
+
     //TODO: Load from File
     Student *s1 = (Student *)calloc(1, sizeof (Student));
     s1->id = 456;
