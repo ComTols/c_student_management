@@ -130,7 +130,7 @@ void con_redraw(MenuItem *items, int length, int *pos) {
     goToXY(17, y);
     printf("\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2");
 
-    goToXY(17, ++y);
+    goToXY(25, ++y);
     printf("ESC zum speichern und beenden");
 
     //Ende
@@ -298,13 +298,13 @@ void con_newData(LinkedList *student) {
     goToXY(22,(y += 2));
     printf("Jahr: ");
     int endeJahr;
-    scanf("%d", &beginnJahr);
+    scanf("%d", &endeJahr);
 
     Datum ende = mkDatum(endeTag, endeMonat, endeJahr);
 
     con_frame(height, &y);
     goToXY(22,y);
-    printf("Moechten Sie folgenden Studenten speichern?");
+    printf("M\x94""chten Sie folgenden Studenten speichern?");
 
     goToXY(22,(y += 2));
     printf("Vorname: %s", vname);
@@ -325,14 +325,14 @@ void con_newData(LinkedList *student) {
     printf("Ende: %d.%d.%d", endeTag, endeMonat, endeJahr);
 
     goToXY(22,(y += 2));
-    printf("Druecken Sie j um zu bestaetigen...");
+    printf("Dr\x81""cken Sie j um zu best\x84tigen...");
 
     if(getch() == 106) {
         Student *newStudent = mkStudent(vname, nname, id, gTag, beginn, ende);
         list_push(student, newStudent);
         list_sort(student, compareStudents);
         goToXY(22,(y += 2));
-        printf("Gespeichert! Weiteren hinzufuegen -> Enter; Menue -> Arrow");
+        printf("Gespeichert! Weiteren hinzuf\x81gen -> Enter; Menue -> Arrow");
     } else {
         goToXY(22,(y += 2));
         printf("Verworfen! Erneut versuchen -> Enter; Menue -> Arrow");
@@ -379,7 +379,7 @@ void con_editData(LinkedList *student) {
         printf("[6] Ende: %d.%d.%d", ((Student*)current->value)->ende.tag, ((Student*)current->value)->ende.monat, ((Student*)current->value)->ende.jahr);
 
         goToXY(22,(y += 2));
-        printf("Was moechten Sie bearbeiten?");
+        printf("Was m\x94""chten Sie bearbeiten?");
 
         int key = getch();
         con_frame(height, &y);
@@ -475,7 +475,7 @@ void con_editData(LinkedList *student) {
         }
 
         goToXY(22,(y += 2));
-        printf("Uebernommen! Weiteren aendern -> Enter; Menue -> Arrow");
+        printf("\x9a""bernommen! Weiteren \x84ndern -> Enter; Menue -> Arrow");
     } else {
         con_frame(height, &y);
         goToXY(22,y);
@@ -492,10 +492,10 @@ void con_countData(LinkedList *student) {
     con_frame(height, &y);
 
     goToXY(22,y);
-    printf("Aktuell sind %d Datensaetze gespeichert.", student->size);
+    printf("Aktuell sind %d Datens\x84tze gespeichert.", student->size);
 
     goToXY(22,(y += 2));
-    printf("Erneut zaehlen -> Enter; Menue -> Arrow");
+    printf("Erneut z\x84hlen -> Enter; Menue -> Arrow");
 }
 void con_showData(LinkedList *student) {
     int y = 0;
@@ -555,7 +555,7 @@ void con_showDataFull(LinkedList *students) {
     con_frame(height, &y);
 
     goToXY(22,y);
-    printf("Es wurden %d Datensaetze gefunden:", students->size);
+    printf("Es wurden %d Datens\x84tze gefunden:", students->size);
 
     Item *current = students->head;
     while (current) {
@@ -575,7 +575,7 @@ void con_deleteData(LinkedList *student) {
     con_frame(height, &y);
 
     goToXY(22,y);
-    printf("Bitte geben Sie die ID des zu loeschenden Studenten ein:");
+    printf("Bitte geben Sie die ID des zu l\x94schenden Studenten ein:");
     goToXY(22,y+1);
     int id;
     scanf("%d", &id);
@@ -615,7 +615,7 @@ void con_deleteData(LinkedList *student) {
         printf("Ende: %d.%d.%d", ((Student*)current->value)->ende.tag, ((Student*)current->value)->ende.monat, ((Student*)current->value)->ende.jahr);
 
         goToXY(22,(y += 2));
-        printf("Moechten Sie diese Daten loeschen? [j/n]");
+        printf("M\x94""chten Sie diese Daten l\x94schen? [j/n]");
 
         switch (getch()) {
             case 106:
@@ -628,7 +628,7 @@ void con_deleteData(LinkedList *student) {
                 }
                 student->size--;
                 goToXY(22,(y += 2));
-                printf("Geloescht! Naechsten loeschen -> Enter; Menue -> Arrow");
+                printf("Gel\x94scht! N\x84""chsten l\x94schen -> Enter; Menue -> Arrow");
                 break;
             default:
                 goToXY(22,(y += 2));
