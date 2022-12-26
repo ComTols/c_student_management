@@ -19,167 +19,377 @@ Rückgabewert:
     `int`: Exitcode
 
 ---
-### `saveAsFile(students, path)`
-Speichert ein Array an Studenteninformationen in die lokale Datenbank.
+## Dokumentation (Konsole)
+### `mkStudent(vname, nname, id, gtag, beginn, ende): Student*`
+Konstruktor für die Struct Student zum einfachen Erstellen eines Datensatzes.
 
-| Parameter | Typ      | Beschreibung                               |
-|-----------|----------|--------------------------------------------|
-| students  | Student* | Das zu speichernde Array an Studenteninfos |
-| path      | char*    | Der Pfad zur Datenbank                     |
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| vname     | char* | Vorname               |
+| nname     | char* | Nachname              |
+| id        | int   | Matrikelnummer        |
+| gtag      | Datum | Geburtstag            |
+| beginn    | Datum | Imatrukulationsdatum  |
+| ende      | Datum | Exmatrikulationsdatum |
 
-Rückgabewert: `void`
-
+Rückgabewert:
+    `Student*`: Erstellter Student
 ---
-### `getFromFile(path): Student[]`
-Liest alle Studenteninformationen aus der lokalen Datenbank und gibt diese als Array zurück.
+### `mkDatum(int tag, int monat, int jahr): Datum`
+Konstruktor für die Struct Datum zum einfachen Erstellen eines Datums.
 
-| Parameter | Typ   | Beschreibung           |
-|-----------|-------|------------------------|
-| path      | char* | Der Pfad zur Datenbank |
+| Parameter | Typ  | Beschreibung      |
+|-----------|------|-------------------|
+| tag       | int  | Tag               |
+| monat     | int  | Monat (numerisch) |
+| jahr      | int  | Jahr              |
 
-Rückgabewert: `Student*`: Alle Informationen aus der Datenbank. Pointer auf erstes Element im Array.
-
+Rückgabewert:
+    `Datum`: Erstelltes Datum
 ---
-### `encode(jsonString): Student[]`
-Gibt ein Array an Studenteninformationen aus einem speziellen JSON-String zurück.
-Die Formatierung des Strings ist stickt zu befolgen:
- - Keine Leerzeichen zwischen den Variablen
- - Keine Zeilenumbrüche (hier nur zur übersicht enthalten!)
- - Escape-Zeichen werden nicht berücksichtigt
- - Alle Keys werden kleingeschrieben
- - Der Typ `number` wird nur ganzzahlig angenommen
-```json
-{
-  "anzahl":number,
-  "studierende":[
-    {
-      "vname":string,
-      "nname":string,
-      "id":number,
-      "gtag":{
-        "tag": number,
-        "monat":number,
-        "jahr":number
-      },
-      "beginn":{
-        "tag":number,
-        "monat":number,
-        "jahr":number
-      },
-      "ende":{
-        "tag":number,
-        "monat":number,
-        "jahr":number
-      }
-    }
-  ]
-}
-```
-| Parameter  | Typ   | Beschreibung                       |
-|------------|-------|------------------------------------|
-| jsonString | char* | Zeichenfolge, aus der gelesen wird |
+### `goToXY(x, y)`
+Verschiebt den Cursor auf der Konsole an die angegebene Position.
 
-Rückgabewert: `Student*`: Die Studenteninformationen aus dem JSON-String.
-Pointer auf das erste Element im Array.
+| Parameter | Typ   | Beschreibung |
+|-----------|-------|--------------|
+| x         | int   | Horizontale  |
+| y         | int   | Vertikale    |
+
+Rückgabewert: 
+    `void`
 ---
-### `jStudent(jsonString, indexPointer): Student`
-Liest vom gesamten JSON-String ab dem übergebenen Index das folgende Objekt als Student-Struct ein
-und gibt eine entsprechende Struct zurück.
-Der Index muss dabei auf das Zeichen hinter der öffnenden geschweiften Klammer stehen.
-Erwartet wird als erstes Symbol `"`.
+### `logo(line)`
+Gibt das Logo auf der Konsole aus.
 
-Nach der Funktion zeigt der Index auf `{` des folgenden Studenten, oder auf `}` des JSON-Objekts.
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| line      | int*  | Zeile unter dem Logo  |
 
-| Parameter    | Typ   | Beschreibung                       |
-|--------------|-------|------------------------------------|
-| jsonString   | char* | Zeichenfolge, aus der gelesen wird |
-| indexPointer | int*  | Pointer auf den aktuellen Index    |
-
-Rückgabewert: `Student`: Die Studenteninformationen aus dem aktuellen Objekt als Struct.
-
+Rückgabewert:
+    `void`
 ---
-### `jString(jsonString, indexPointer): char[]`
-Liest vom gesamten JSON-String ab dem übergebenen Index den folgenden String ein
-und gibt diesen als Char-Array zurück.
-Der Index muss dabei auf das anführende `"` zeigen. Der String wird bis zum nächsten `"` gelesen.
+### `con_frame(height, firstLine)`
+Gibt den Rahmen auf der Konsole aus.
 
-Nach der Funktion zeigt der Index auf das abschließende `"` des Strings.
+| Parameter | Typ   | Beschreibung                                |
+|-----------|-------|---------------------------------------------|
+| height    | int   | Die Höhe des Fensters                       |
+| fistLine  | int*  | Erste Zeile, in die geschrieben werden kann |
 
-**ACHTUNG!** Es werden keine Escape-Zeichen berücksichtigt.
-
-| Parameter    | Typ   | Beschreibung                       |
-|--------------|-------|------------------------------------|
-| jsonString   | char* | Zeichenfolge, aus der gelesen wird |
-| indexPointer | int*  | Pointer auf den aktuellen Index    |
-
-Rückgabewert: `char*`: Die gelesene Zeichenfolge als Char-Array.
-Pointer auf das erste Element.
-
+Rückgabewert:
+    `void`
 ---
-### `jDatum(jsonString, indexPointer): Datum`
-Liest vom gesamten JSON-String ab dem übergebenen Index das folgende Objekt als Datum-Struct ein
-und gibt eine entsprechende Struct zurück.
-Der Index muss dabei auf die öffnenden geschweiften Klammer zeigen.
-Erwartet wird als erstes Symbol `{`.
+### `con_redraw(MenuItem *items, int length, int *pos)`
+Gibt das Menü auf der Konsole aus.
 
-Nach der Funktion zeigt der Index auf die schließende geschweifte Klammer des jeweiligen JSON-Objekts.
+| Parameter | Typ       | Beschreibung                 |
+|-----------|-----------|------------------------------|
+| items     | MenuItem* | Die auszugebenden Menüpunkte |
+| length    | int       | Die Länge des Array <items>  |
+| pos       | int*      | Die Zeigerposition           |
 
-| Parameter    | Typ   | Beschreibung                       |
-|--------------|-------|------------------------------------|
-| jsonString   | char* | Zeichenfolge, aus der gelesen wird |
-| indexPointer | int*  | Pointer auf den aktuellen Index    |
-
-Rückgabewert: `Datum`: Die Datumsinformationen aus dem aktuellen Objekt als Struct.
-
+Rückgabewert:
+    `void`
 ---
-### `isNumber(c): boolean`
-Gibt true zurück, wenn der übergebene Char eine Zahl ist.
+### `con_mkMenu(size): MenuItem*`
+Konstruktor für das Menü.
 
 | Parameter | Typ   | Beschreibung         |
 |-----------|-------|----------------------|
-| c         | char  | Der zu prüfende Char |
-
-Rückgabewert: `bool`: `True` -> Char ist Ziffer; `False` -> Char ist keine Ziffer
-
----
-### `potenz(int basis, int exponent): int`
-Gibt die den Wert einer Potenz mal dem Faktor 10 zurück.
-
-| Parameter | Typ | Beschreibung            |
-|-----------|-----|-------------------------|
-| basis     | int | Die Basis der Potenz    |
-| exponent  | int | Der Exponent der Potenz |
-
-Rückgabewert: `int`: Den Wert der Potenz mal 10
-### `goToXY(x,y)`
-Setzt den Cursor zum Schreiben in den Output-Stream auf die übergebene Position.
-
-| Parameter | Typ | Beschreibung                        |
-|-----------|-----|-------------------------------------|
-| x         | int | Position auf der horizontalen Achse |
-| y         | int | Position auf der vertikalen Achse   |
+| size      | int*  | Die Größe des Arrays |
 
 Rückgabewert:
-`void`
-
+    `MenuItem*`: Pointer auf das erste Element im Array
 ---
-### `menuAnzeige(MenuChoice): int`
-Zeigt das Menü an und färbt den ausgewählten Menüpunkt rot.
+### `con_input(items, length, pos, students)`
+Fängt die Tastendrücke des Nutzers ab und ruft die entsprechende Methode auf.
 
-| Parameter  | Typ | Beschreibung                      |
-|------------|-----|-----------------------------------|
-| MenuChoice | int | Aktuell ausgewählter Menüpunkt    |
+| Parameter | Typ         | Beschreibung                        |
+|-----------|-------------|-------------------------------------|
+| items     | MenuItem*   | Alle Menüpunkte                     |
+| length    | int         | Länge des Arrays <items>            |
+| pos       | int*        | Position des Zeigers                |
+| students  | LinkedList* | Liste aller gespeicherten Studenten |
 
 Rückgabewert:
-`int`: 0 bei Erfolg
+    `void`
 ---
-### `Logo()`
-Zeigt das DHBW-Logo in der Konsole an.
-Rückgabewert:
-`void`
----
-### `CheckKey()`
-Überprüft, ob eine Taste gedrückt wurde.
+### `con_clamp(in, max)`
+Lässt einen Wert zwischen 0 und <max> bewegen.
+
+| Parameter | Typ   | Beschreibung                       |
+|-----------|-------|------------------------------------|
+| in        | int*  | Zu beschränkende Variable          |
+| max       | int   | Maximal zulässiger Wert (exklusiv) |
 
 Rückgabewert:
-`void`
+    `void`
+---
+### `load(): LinkedList*`
+Lädt alle Daten aus einer Datei.
+> In dieser Funktion gibt es einen Bug!
+> Nachdem die Werte aus der Datei gelesen wurden und in einen JSON-Tree konvertiert wurden,
+> werden die Keys nicht korrekt behalten. Wahrscheinlich wird der Wert aus Versehen auf einen Pointer gesetzt.
+> Alle Keys sind nach dem Beenden der Funktion json_read() gleich lang und unleserlich.
+> Aus Zeitmangel konnten wir diesen Bug nicht fixen. Daher kann das Programm keine Daten beim
+> öffnen automatisch laden.
+> Um dies zu simulieren werden statische Daten am Anfang anstelle der Daten aus der Datei geladen.
+
+Rückgabewert:
+    `LinkedList*`: Pointer auf die Liste aller Studenten
+---
+### `save(data)`
+Speichert die Liste der Studenten in einer Datei ab.
+
+| Parameter | Typ         | Beschreibung          |
+|-----------|-------------|-----------------------|
+| data      | LinkedList* | Zu speichernde Daten  |
+
+Rückgabewert:
+    `void`
+---
+### `compareStudents(Item *first, Item *sec): int`
+Vergleicht zwei Studenten anhand ihrer Nachnamen.
+Gibt 0 bei Gleichheit, > 0 wenn das erste vor dem zweiten kommt und < 0 wenn das zweite vor dem ersten Kommt.
+
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| first     | Item* | Erster Student        |
+| sec       | Item* | Zweiter Student       |
+
+Rückgabewert:
+    `int`: Vergleichswert
+---
+
+## Dokumentation (Json)
+### `json_mkJson(type): Json`
+Konstruktor der Struct Json zum schnellen Erstellen eines Json-Objekts des entsprechenden Typs.
+
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| type      | char  | Der Typ des Objekts   |
+
+Rückgabewert:
+    `Json`: Json-Objekt des entsprechenden Typs
+---
+### `json_null(): Json`
+Erstellt ein Json-Objekt des Typs <null>.
+
+Rückgabewert:
+    `Json`: Json-Null-Objekt
+---
+### `json_string(val): Json`
+Erstellt ein Json-Objekt des Typs <string>
+
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| val       | char* | Wert                  |
+
+Rückgabewert:
+    `Json`: Json-String-Objekt
+---
+### `json_float(val): Json`
+Erstellt ein Json-Objekt des Typs <float>
+
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| val       | char* | Wert                  |
+
+Rückgabewert:
+`Json`: Json-Float-Objekt
+---
+### `json_int(val): Json`
+Erstellt ein Json-Objekt des Typs <int>
+
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| val       | char* | Wert                  |
+
+Rückgabewert:
+`Json`: Json-Integer-Objekt
+---
+### `json_list(val): Json`
+Erstellt ein Json-Objekt des Typs <list>
+
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| val       | char* | Wert                  |
+
+Rückgabewert:
+`Json`: Json-List-Objekt
+---
+### `json_list_add(list, val)`
+Fügt ein Json-Objekt zu einer Json-Liste hinzu.
+
+| Parameter | Typ   | Beschreibung         |
+|-----------|-------|----------------------|
+| list      | Json* | Liste zum hinzufügen |
+| val | Json* | Hinzuzufügendes Json-Objekt |
+
+Rückgabewert:
+    `void`
+---
+### `json_obj_put(obj, key, val)`
+Fügt ein Element einem Json-Objekt hinzu.
+
+| Parameter | Typ   | Beschreibung                   |
+|-----------|-------|--------------------------------|
+| obj       | Json* | Objekt zu dem hinzugefügt wird |
+| key       | char* | Schlüssel                      |
+| val       | Json* | Hinzuzufügendes Json-Objekt    |
+
+Rückgabewert:
+    `void`
+---
+### `json_obj_put_string(obj, key, val)`
+Fügt einen String zu einem Json-Objekt hinzu.
+
+| Parameter | Typ   | Beschreibung                   |
+|-----------|-------|--------------------------------|
+| obj       | Json* | Objekt zu dem hinzugefügt wird |
+| key       | char* | Schlüssel                      |
+| val       | char* | Wert                           |
+
+Rückgabewert:
+    `void`
+---
+### `json_obj_put_int(obj, key, val)`
+Fügt einen Integer zu einem Json-Objekt hinzu.
+
+| Parameter | Typ   | Beschreibung                   |
+|-----------|-------|--------------------------------|
+| obj       | Json* | Objekt zu dem hinzugefügt wird |
+| key       | char* | Schlüssel                      |
+| val       | int   | Wert                           |
+
+Rückgabewert:
+    `void`
+---
+### `json_stringify(j): StringStream`
+Gibt den Stringstream zu einem Json-Tree zurück.
+
+| Parameter | Typ   | Beschreibung                     |
+|-----------|-------|----------------------------------|
+| j         | Json  | Zu interpretierdenes Json-Objekt |
+
+Rückgabewert:
+    `StringStream`: Zeichenkette im JSON-Format
+---
+### `json_dump(j): char*`
+Gibt eine Zeichenkette im Json-Format eines Json-Trees zurück.
+
+| Parameter | Typ   | Beschreibung                     |
+|-----------|-------|----------------------------------|
+| j         | Json  | Zu interpretierdendesJson-Objekt |
+
+Rückgabewert:
+    `char*`: Pointer auf den ersten Buchstaben der Zeichenkette
+---
+### `json_read(path): Json`
+Liest eine Json-Datei ein.
+
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| path      | char* | Pfad zur Datei        |
+
+Rückgabewert:
+    `Json`: Das interpretierte Json-Objekt
+---
+### `json_obj_get(obj, key): Json*`
+Gibt das Json-Objekt hinter dem übergebenene Key zurück.
+
+| Parameter | Typ   | Beschreibung                    |
+|-----------|-------|---------------------------------|
+| obj       | Json* | Json-Objekt in dem gesucht wird |
+| key       | char* | Schlüssel                       |
+
+Rückgabewert:
+    `Json*`: Pointer auf die interpretierte Json-Struktur
+---
+### `json_free(j)`
+Gibt den Speicher frei.
+
+| Parameter | Typ   | Beschreibung              |
+|-----------|-------|---------------------------|
+| j         | Json* | Zu löschendes Json-Objekt |
+
+Rückgabewert:
+    `void`
+---
+## Dokumentation (LinkedList)
+LinkedList list_mkList();
+Item *list_mkItem(void *value);
+
+//Fügt ein Element am Anfang hinzu und gibt die neue Länge zurück
+int list_unshift(LinkedList* list, void* value);
+//Fügt ein Element am Ende hinzu und gibt die neue Länge zurück
+int list_push(LinkedList* list, void* value);
+//Fügt ein Element an einer bestimmten Position hinzu und gibt die neue Länge zurück
+int list_addAtIndex(LinkedList* list, void* value, int index);
+
+//Entfernt das letzte Element und gibt es zurück
+void *list_pop(LinkedList* list);
+//Entfernt das erste Element und gibt es zurück
+void *list_shift(LinkedList* list);
+//Entfernt ein Element an einer bestimmten Stelle und gibt es zurück
+void *list_remove(LinkedList* list, int index);
+
+//Apply a function simultaneously against two values of the array (from left-to-right) as to reduce it to a single value.
+void list_reduce();
+//Reverses the order of the elements of an array -- the first becomes the last, and the last becomes the first.
+void list_reverse();
+//Sorts the elements of an array.
+void list_sort(LinkedList *list, int(*compare)(Item* first, Item* secound));
+
+//Gibt ein Element an einer bestimmten Stelle zurück
+void *list_get(LinkedList *list, int index);
+void *list_getLast(LinkedList *list);
+void *list_getFirst(LinkedList *list);
+
+void list_print(LinkedList *list);
+
+## Dokumentation (Map)
+Map map_mkMap(int (*hashf)(void* key), int (*compKeys)(void *key1, void *key2));
+Map map_mkMapOfSize(int bucketsCount, int (*hashf)(void* key), int (*compKeys)(void *key1, void *key2));
+Entry *map_mkEntry(int hash, void *key, void* value);
+
+//Operationen auf Maps
+void map_resize(Map *map);
+void map_put(Map* map, void *key, void *value);
+void *map_get(Map *map, void *key);
+Entry *map_getEntry(Map *map, void *key);
+void *map_remove(Map *map, void* key);
+
+void map_free(Map *map);
+void map_freeEntry(Entry *entry);
+
+## Dokumentation (StringStream)
+StringStream stream_mkStringStream();
+StringStream stream_mkStringStreamSize(int size);
+StringStream stream_mkStringStreamFromString(char *str);
+
+char stream_increase(StringStream *stream, int inc);
+int stream_available(StringStream *stream);
+void stream_fprintf(StringStream *stream, const char *format, ...);
+void stream_read(StringStream *stream, void *data, int length);
+void stream_cursorBackwarts(StringStream *stream, int length);
+
+void stream_readFile(StringStream *stream, FILE *file, int length);
+void stream_writeFile(StringStream *stream, FILE *file, int first, int last);
+
+void stream_clear(StringStream *stream);
+void stream_print(StringStream *stream);
+void stream_printFull(StringStream *stream);
+
+char *stream_substr(StringStream *s, unsigned int i, int n);
+
+---
+# Quellen
+Diese Projekt basiert auf verschiedenen Quellen im Internet. Alle enthaltenden Dateien wurden von uns
+selber geschrieben, basieren jedoch auf algorithmen und Strukturen, die sich bewährt haben.
+Ebenso wurden verschiedene Codefragmente aus Recherchen zu bestimmten Themen verwendet.
+Insbesondere die Umsetzung des Json-Interpreters, der Hash-Map und der Stringstreams basieren auf
+Codes von StackOverflow und YouTube. Genaue Quellen können wir leider nicht nennen, da wir
+den Code selber geschrieben und für unsere Bedürfnisse angepasst haben. Daher ist nicht 
+mehr klar zu differenzieren, welcher Teil des Codes aus welcher Quelle kommt.
+Es ist ein Gesamtwerk, das auf unseren eigenen Recherchen basiert.
