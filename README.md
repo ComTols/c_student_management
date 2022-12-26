@@ -5,6 +5,8 @@ Es ermöglicht das Abspeichern und Einlesen persönlicher Daten, wie etwa Name, 
 Es handelt sich um eine reine Konsolenanwendung. Daten zum Importieren müssen einer bestimmten From entsprechen, welche in der Dokumentation genauer beschrieben ist.
 Die Datenbank wird lokal gespeichert. Es besteht die Möglichkeit, Backups und Version Controls beim Speichern zu erstellen.
 
+Link zur GitHub-Repo: https://github.com/ComTols/c_student_management
+
 -----
 ## Dokumentation
 ### `main(argc, argv): int`
@@ -317,75 +319,111 @@ Rückgabewert:
     `void`
 ---
 ## Dokumentation (LinkedList)
-LinkedList list_mkList();
-Item *list_mkItem(void *value);
+### `list_mkList(): LinkedList`
+Konstruktor zum erstellen einer verketteten Liste
 
-//Fügt ein Element am Anfang hinzu und gibt die neue Länge zurück
-int list_unshift(LinkedList* list, void* value);
-//Fügt ein Element am Ende hinzu und gibt die neue Länge zurück
-int list_push(LinkedList* list, void* value);
-//Fügt ein Element an einer bestimmten Position hinzu und gibt die neue Länge zurück
-int list_addAtIndex(LinkedList* list, void* value, int index);
+Rückgabewert:
+    `LinkedList`: Die verkettete Liste
+---
+### `list_mkItem(void *value): Item*`
+Erstellt ein Element einer verketteten Liste mit bestimmten Wert.
 
-//Entfernt das letzte Element und gibt es zurück
-void *list_pop(LinkedList* list);
-//Entfernt das erste Element und gibt es zurück
-void *list_shift(LinkedList* list);
-//Entfernt ein Element an einer bestimmten Stelle und gibt es zurück
-void *list_remove(LinkedList* list, int index);
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| value     | void* | Der Wert des Elements |
 
-//Apply a function simultaneously against two values of the array (from left-to-right) as to reduce it to a single value.
-void list_reduce();
-//Reverses the order of the elements of an array -- the first becomes the last, and the last becomes the first.
-void list_reverse();
-//Sorts the elements of an array.
-void list_sort(LinkedList *list, int(*compare)(Item* first, Item* secound));
+Rückgabewert:
+    `Item*`: Pointer auf das Listenelement
+---
+### `list_unshift(LinkedList* list, void* value): int`
+Fügt ein Element am Anfang hinzu und gibt die neue Länge zurück
 
-//Gibt ein Element an einer bestimmten Stelle zurück
-void *list_get(LinkedList *list, int index);
-void *list_getLast(LinkedList *list);
-void *list_getFirst(LinkedList *list);
+| Parameter | Typ         | Beschreibung             |
+|-----------|-------------|--------------------------|
+| list      | LinkedList* | Die zu verändernde Liste |
+| value     | void*       | Hinzuzufügendes Element  |
 
-void list_print(LinkedList *list);
+Rückgabewert:
+    `int`: Neue Länge der Liste
+---
+### `list_push(LinkedList* list, void* value): int`
+Fügt ein Element am Ende hinzu und gibt die neue Länge zurück
 
-## Dokumentation (Map)
-Map map_mkMap(int (*hashf)(void* key), int (*compKeys)(void *key1, void *key2));
-Map map_mkMapOfSize(int bucketsCount, int (*hashf)(void* key), int (*compKeys)(void *key1, void *key2));
-Entry *map_mkEntry(int hash, void *key, void* value);
+| Parameter | Typ         | Beschreibung             |
+|-----------|-------------|--------------------------|
+| list      | LinkedList* | Die zu verändernde Liste |
+| value     | void*       | Hinzuzufügendes Element  |
 
-//Operationen auf Maps
-void map_resize(Map *map);
-void map_put(Map* map, void *key, void *value);
-void *map_get(Map *map, void *key);
-Entry *map_getEntry(Map *map, void *key);
-void *map_remove(Map *map, void* key);
+Rückgabewert:
+    `int`: Neue Länge der Liste
+---
+### `list_addAtIndex(LinkedList* list, void* value, int index): int`
+Fügt ein Element an einer bestimmten Position hinzu und gibt die neue Länge zurück
 
-void map_free(Map *map);
-void map_freeEntry(Entry *entry);
+| Parameter | Typ         | Beschreibung                             |
+|-----------|-------------|------------------------------------------|
+| list      | LinkedList* | Die zu verändernde Liste                 |
+| value     | void*       | Hinzuzufügedes Element                   |
+| index     | int         | Position, an der hinzugefügt werden soll |
 
-## Dokumentation (StringStream)
-StringStream stream_mkStringStream();
-StringStream stream_mkStringStreamSize(int size);
-StringStream stream_mkStringStreamFromString(char *str);
+Rückgabewert:
+    `int`: Neue Länge der Liste
+---
+### `list_pop(LinkedList* list): void*`
+Entfernt das letzte Element und gibt es zurück
 
-char stream_increase(StringStream *stream, int inc);
-int stream_available(StringStream *stream);
-void stream_fprintf(StringStream *stream, const char *format, ...);
-void stream_read(StringStream *stream, void *data, int length);
-void stream_cursorBackwarts(StringStream *stream, int length);
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| list      | LinkedList* | Die zu verändernde Liste                 |
 
-void stream_readFile(StringStream *stream, FILE *file, int length);
-void stream_writeFile(StringStream *stream, FILE *file, int first, int last);
+Rückgabewert:
+    `void*`: Pointer auf das letzte Element der Liste
+---
+### `list_shift(LinkedList* list): void*`
+Entfernt das erste Element und gibt es zurück
 
-void stream_clear(StringStream *stream);
-void stream_print(StringStream *stream);
-void stream_printFull(StringStream *stream);
+| Parameter | Typ   | Beschreibung          |
+|-----------|-------|-----------------------|
+| list      | LinkedList* | Die zu verändernde Liste                 |
 
-char *stream_substr(StringStream *s, unsigned int i, int n);
+Rückgabewert:
+    `void*`: Pointer auf das erste Element der Liste
+---
+### `list_sort(LinkedList *list, int(*compare)(Item* first, Item* secound))`
+Sortiert die Liste
+
+| Parameter | Typ               | Beschreibung                          |
+|-----------|-------------------|---------------------------------------|
+| list      | LinkedList*       | Die zu verändernde Liste              |
+| compare   | int(Item*, Item*) | Funktion zum vergleichen der Elemente |
+
+Rückgabewert:
+    `void`
+---
+### `list_get(LinkedList *list, int index): void*`
+Gibt ein Element an einer bestimmten Stelle zurück
+
+| Parameter | Typ         | Beschreibung                 |
+|-----------|-------------|------------------------------|
+| list      | LinkedList* | Die zu verändernde Liste     |
+| index     | int         | Index des gesuchten Elements |
+
+Rückgabewert:
+    `void*`: Pointer auf das gesuchte Element
+---
+### `list_print(LinkedList *list)`
+Gibt eine Liste auf der Konsole aus.
+
+| Parameter | Typ   | Beschreibung           |
+|-----------|-------|------------------------|
+| list      | LinkedList* | Die auszugebende Liste |
+
+Rückgabewert:
+    `void`
 
 ---
 # Quellen
-Diese Projekt basiert auf verschiedenen Quellen im Internet. Alle enthaltenden Dateien wurden von uns
+Dieses Projekt basiert auf verschiedenen Quellen im Internet. Alle enthaltenden Dateien wurden von uns
 selber geschrieben, basieren jedoch auf algorithmen und Strukturen, die sich bewährt haben.
 Ebenso wurden verschiedene Codefragmente aus Recherchen zu bestimmten Themen verwendet.
 Insbesondere die Umsetzung des Json-Interpreters, der Hash-Map und der Stringstreams basieren auf
